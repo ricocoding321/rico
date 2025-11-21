@@ -1,3 +1,5 @@
+Copilot said: ```html <!DOCTYPE html> <html lang="en"> <head> <meta
+HTML
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -140,74 +142,146 @@ h1.right{
         </div>
     </main>    
 
-
-
-
     <script>
         let banner = document.querySelector('.banner');
-let canvas = document.getElementById('dotsCanvas');
-canvas.width = canvas.offsetWidth;
-canvas.height = canvas.offsetHeight;
-const ctx = canvas.getContext('2d');
-let dots = [];
-const arrayColors = ['#eee', '#545454', '#596d91', '#bb5a68', '#696541'];
-for (let index = 0; index < 5000; index++) {
-    dots.push({
-        x:  Math.floor(Math.random() * canvas.width),
-        y:  Math.floor(Math.random() * canvas.height),
-        size: Math.random() * 3 + 5,
-        color: arrayColors[Math.floor(Math.random()* 5)]
-    });
-}
-const drawDots = () => {
-    dots.forEach(dot => {
-        ctx.fillStyle = dot.color;
-        ctx.beginPath();
-        ctx.arc(dot.x, dot.y, dot.size, 0, Math.PI*2);
-        ctx.fill();
-    })
-}
-drawDots();
-banner.addEventListener('mousemove', (event) => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawDots();
-    let mouse = {
-        x:  event.pageX - banner.getBoundingClientRect().left,
-        y:  event.pageY - banner.getBoundingClientRect().top
-    }
-    dots.forEach(dot => {
-        let distance = Math.sqrt((mouse.x - dot.x) ** 2 + (mouse.y - dot.y) ** 2);
-        if(distance < 300){
-            ctx.strokeStyle = dot.color;
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(dot.x, dot.y);
-            ctx.lineTo(mouse.x, mouse.y);
-            ctx.stroke();
+        let canvas = document.getElementById('dotsCanvas');
+        const resizeCanvas = () => {
+            canvas.width = banner.offsetWidth;
+            canvas.height = banner.offsetHeight;
+        };
+        resizeCanvas();
+        const ctx = canvas.getContext('2d');
+        let dots = [];
+        const arrayColors = ['#eee', '#545454', '#596d91', '#bb5a68', '#696541'];
+        for (let index = 0; index < 5000; index++) {
+            dots.push({
+                x:  Math.floor(Math.random() * canvas.width),
+                y:  Math.floor(Math.random() * canvas.height),
+                size: Math.random() * 3 + 5,
+                color: arrayColors[Math.floor(Math.random()* 5)]
+            });
         }
-    })
-})
-banner.addEventListener('mouseout', () => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawDots();
-})
-window.addEventListener('resize', () => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    canvas.width = banner.offsetWidth;
-    canvas.height = banner.offsetHeight;
 
+        // Special shining/moving/blinking dot
+        // Control parameters
+        let movingDot = {
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            baseRadius: 15,
+            color: "#fffbe8",
+            phase: 0,
+            direction: Math.random() * 2 * Math.PI,
+            velocity: 1.2 + Math.random()
+        };
 
-    dots = [];
-    for (let index = 0; index < 50; index++) {
-        dots.push({
-            x:  Math.floor(Math.random() * canvas.width),
-            y:  Math.floor(Math.random() * canvas.height),
-            size: Math.random() * 3 + 5,
-            color: arrayColors[Math.floor(Math.random()* 5)]
+        function drawShiningDot(dot, time) {
+            // pulsate
+            let shine = Math.abs(Math.sin(time / 500)) * 0.7 + 0.2;
+            let alpha = Math.abs(Math.sin(time / 300)) * 0.55 + 0.25;
+            // Outer glow
+            let grad = ctx.createRadialGradient(dot.x, dot.y, dot.baseRadius*0.4, dot.x, dot.y, dot.baseRadius*2.5);
+            grad.addColorStop(0, `rgba(255,253,246,${shine*0.7})`);
+            grad.addColorStop(0.5, `rgba(255,230,200,${alpha*0.6})`);
+            grad.addColorStop(0.8, `rgba(180,100,255,${alpha*0.12})`);
+            grad.addColorStop(1, `rgba(180,100,255,0)`);
+            ctx.save();
+            ctx.globalCompositeOperation = "lighter";
+            ctx.beginPath();
+            ctx.arc(dot.x, dot.y, dot.baseRadius*2, 0, 2 * Math.PI);
+            ctx.fillStyle = grad;
+            ctx.shadowColor = "#fff6cd";
+            ctx.shadowBlur = 42;
+            ctx.fill();
+            ctx.restore();
+            // Main dot
+            ctx.save();
+            ctx.globalCompositeOperation = "lighter";
+            ctx.beginPath();
+            ctx.arc(dot.x, dot.y, dot.baseRadius + Math.sin(time/150)*3, 0, 2 * Math.PI);
+            ctx.fillStyle = `rgba(255,253,246,${shine})`;
+            ctx.shadowColor = "#fffbb9";
+            ctx.shadowBlur = 30;
+            ctx.fill();
+            ctx.restore();
+        }
+
+        function drawDots() {
+            dots.forEach(dot => {
+                ctx.fillStyle = dot.color;
+                ctx.beginPath();
+                ctx.arc(dot.x, dot.y, dot.size, 0, Math.PI*2);
+                ctx.fill();
+            })
+        }
+
+        // Animation
+        let animationId = null;
+        let lastDrawBannerMouse = null;
+
+        function animateDots(time) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawDots();
+            if (lastDrawBannerMouse && lastDrawBannerMouse.inside) {
+                let mouse = lastDrawBannerMouse;
+                dots.forEach(dot => {
+                    let distance = Math.hypot(mouse.x - dot.x, mouse.y - dot.y);
+                    if(distance < 300){
+                        ctx.strokeStyle = dot.color;
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(dot.x, dot.y);
+                        ctx.lineTo(mouse.x, mouse.y);
+                        ctx.stroke();
+                    }
+                });
+            }
+            // Animate moving dot's position (move in a sinusoidal/elliptical path)
+            movingDot.x += Math.cos(movingDot.direction)*movingDot.velocity;
+            movingDot.y += Math.sin(movingDot.direction)*movingDot.velocity;
+            // Bounce off edges
+            if(movingDot.x <= movingDot.baseRadius*2 || movingDot.x >= canvas.width-movingDot.baseRadius*2){
+                movingDot.direction = Math.PI - movingDot.direction;
+            }
+            if(movingDot.y <= movingDot.baseRadius*2 || movingDot.y >= canvas.height-movingDot.baseRadius*2){
+                movingDot.direction = -movingDot.direction;
+            }
+            drawShiningDot(movingDot, time);
+            animationId = requestAnimationFrame(animateDots);
+        }
+
+        drawDots();
+        animateDots();
+
+        banner.addEventListener('mousemove', (event) => {
+            const rect = banner.getBoundingClientRect();
+            lastDrawBannerMouse = {
+                x: event.clientX - rect.left,
+                y: event.clientY - rect.top,
+                inside: true
+            }
         });
-    }
-    drawDots();
-})
+        banner.addEventListener('mouseleave', () => {
+            lastDrawBannerMouse = null;
+        });
+
+        window.addEventListener('resize', () => {
+            cancelAnimationFrame(animationId);
+            resizeCanvas();
+            // Recreate dots for new size
+            dots = [];
+            for (let index = 0; index < 5000; index++) {
+                dots.push({
+                    x:  Math.floor(Math.random() * canvas.width),
+                    y:  Math.floor(Math.random() * canvas.height),
+                    size: Math.random() * 3 + 5,
+                    color: arrayColors[Math.floor(Math.random()* 5)]
+                });
+            }
+            // Reset moving dot within canvas
+            movingDot.x = Math.random() * canvas.width;
+            movingDot.y = Math.random() * canvas.height;
+            animationId = requestAnimationFrame(animateDots);
+        });
     </script>
 </body>
 </html>
