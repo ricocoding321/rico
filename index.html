@@ -1,288 +1,223 @@
-Copilot said: ```html <!DOCTYPE html> <html lang="en"> <head> <meta
-HTML
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Copilot Said: Simon Game</title>
     <style>
-        body{
-    color: #eee;
-    font-family:    ;
-    margin: 0;
-    background-image:
-    repeating-linear-gradient(
-        to right, #2d2a44 0 1px, transparent 2px 200px
-    ),
-    repeating-linear-gradient(
-        to bottom, #2d2a44 0 1px, transparent 2px 200px
-    ),
-    radial-gradient(
-        at 50% 50%, #2d2a44, #1d1b34
-    );
-}
-::-webkit-scrollbar{
-    width: 0;
-}
-*{
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-    list-style: none;
-}
-header img{
-    width: 30px;
-}
-header{
-    width: min(1200px, 90vw);
-    margin: auto;
-    height: 70px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-header nav ul{
-    display: flex;
-    gap: 30px;
-}
-main{
-}
-main .banner{
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
-    text-align: center;
-    margin-top: -70px;
-}
-h1, h2, h3, h4, h5, h6{
-    font-weight: 500;
-}
-.banner button{
-    all: unset;
-    border: 1px solid #afaeae55;
-    padding: 10px 20px;
-    border-radius: 20px;
-    background-image: linear-gradient(
-        to bottom, #eee1, transparent, #eee1
-    );
-    cursor: pointer;
-    transition: 0.5s;
-}
-.banner button:hover{
-    background-color: #c691e6;
-    color: #040018;
-    box-shadow: 0 0 50px #c691e6;
-   
-}
-h1{
-    --to: left;
-    font-size: 4em;
-    font-weight: bold;
-    background-image: linear-gradient(
-        to var(--to), #89a5df, #e46e7f, #e8e191
-    );
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-transform: uppercase;
-    line-height: 1em;
-
-
-}
-h1.right{
-    --to: right;
-}
-
-
-.banner{
-    position: relative;
-}
-.banner #dotsCanvas{
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    pointer-events: none;
-}
+        body {
+            color: #eee;
+            font-family: system-ui, sans-serif;
+            margin: 0;
+            background-image:
+                repeating-linear-gradient(to right, #2d2a44 0 1px, transparent 2px 200px),
+                repeating-linear-gradient(to bottom, #2d2a44 0 1px, transparent 2px 200px),
+                radial-gradient(at 50% 50%, #2d2a44, #1d1b34);
+        }
+        main {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        h1 {
+            background-image: linear-gradient(to left, #89a5df, #e46e7f, #e8e191);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 16px;
+        }
+        .simon-board {
+            display: grid;
+            grid-template-columns: repeat(2, 110px);
+            grid-template-rows: repeat(2, 110px);
+            gap: 22px;
+            margin-bottom: 30px;
+        }
+        .simon-btn {
+            border: none;
+            width: 110px;
+            height: 110px;
+            border-radius: 22px;
+            background-color: #555;
+            filter: brightness(0.88);
+            transition: filter 0.1s, box-shadow 0.1s;
+            box-shadow: 0 5px 25px #0008;
+            font-size: 2rem;
+        }
+        .simon-btn.green { background: #1eed5b; }
+        .simon-btn.red   { background: #ea252f; }
+        .simon-btn.blue  { background: #4073e9; }
+        .simon-btn.yellow{ background: #eee145; color: #373104;}
+        .simon-btn.active {
+            filter: brightness(1.5);
+            box-shadow: 0 0 80px 32px #fff5, 0 5px 25px #0006;
+        }
+        #startBtn {
+            all: unset;
+            display: inline-block;
+            padding: 12px 32px;
+            border-radius: 16px;
+            background-color: #c691e6cc;
+            color: #191122;
+            font-weight: bold;
+            box-shadow: 0 3px 20px #0003;
+            outline: 2px solid #b7b4ef55;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: background .2s;
+        }
+        #startBtn:hover, #startBtn:focus { background: #fff971e5;}
+        .game-status {
+            margin-bottom: 10px;
+            min-height: 2.2em;
+            font-size: 1.15em;
+        }
+        .score {
+            margin-top: 5px;
+            font-size: 1.1em;
+            color: #e46e7f;
+        }
+        @media (max-width: 540px) {
+            .simon-board, .simon-btn { width: 180px; height: 180px; }
+            .simon-btn { font-size: 1.2rem; }
+        }
     </style>
 </head>
 <body>
-    <header>
-        <figure>
-            <img src="../logo.svg">
-        </figure>
-        <nav>
-            <ul>
-                <li>Overview</li>
-                <li>Team</li>
-                <li>Pricing</li>
-                <li>Enterprise</li>
-            </ul>
-        </nav>
-    </header>
     <main>
-        <div class="banner">
-            <h5>@Rico_zzz</h5>
-            <div>
-                <h1 class="left">Welcome to My Coding</h1>
-                <h1 class="right">Rico</h1>
-            </div>
-            <h4>
-                Subscribe to the channel to continuously
-                <br>update interesting videos
-            </h4>
-            <button>Subscribe Now &#8599</button>
-
-
-            <canvas id="dotsCanvas"></canvas>
+        <h1>Copilot said: Simon Game</h1>
+        <div class="game-status" id="status"></div>
+        <div class="score">Score: <span id="score">0</span></div>
+        <button id="startBtn">Start Game</button>
+        <div class="simon-board" id="board">
+            <button class="simon-btn green"  data-color="green"  tabindex="1"></button>
+            <button class="simon-btn red"    data-color="red"    tabindex="2"></button>
+            <button class="simon-btn yellow" data-color="yellow" tabindex="3"></button>
+            <button class="simon-btn blue"   data-color="blue"   tabindex="4"></button>
         </div>
-    </main>    
+    </main>
+<script>
+const colors = ['green', 'red', 'yellow', 'blue'];
+const board = document.getElementById('board');
+const btns  = [...board.getElementsByClassName('simon-btn')];
+const startBtn = document.getElementById('startBtn');
+const statusText = document.getElementById('status');
+const scoreEl = document.getElementById('score');
 
-    <script>
-        let banner = document.querySelector('.banner');
-        let canvas = document.getElementById('dotsCanvas');
-        const resizeCanvas = () => {
-            canvas.width = banner.offsetWidth;
-            canvas.height = banner.offsetHeight;
-        };
-        resizeCanvas();
-        const ctx = canvas.getContext('2d');
-        let dots = [];
-        const arrayColors = ['#eee', '#545454', '#596d91', '#bb5a68', '#696541'];
-        for (let index = 0; index < 500; index++) {
-            dots.push({
-                x:  Math.floor(Math.random() * canvas.width),
-                y:  Math.floor(Math.random() * canvas.height),
-                size: Math.random() * 3 + 5,
-                color: arrayColors[Math.floor(Math.random()* 5)]
-            });
+let seq = [];
+let plyIdx = 0;
+let running = false;
+let canPlay = false;
+let score = 0;
+
+function playSound(color) {
+    // Basic beep using AudioContext
+    const ctx = window.AudioContext ? new AudioContext() : null;
+    if (!ctx) return;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    let freq = 400;
+    switch (color) {
+        case 'green': freq = 335; break;
+        case 'red': freq = 455; break;
+        case 'yellow': freq = 569; break;
+        case 'blue': freq = 377; break;
+    }
+    osc.frequency.value = freq;
+    osc.type = "triangle";
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    gain.gain.setValueAtTime(0.20, ctx.currentTime);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.18);
+    osc.onended = () => ctx.close();
+}
+
+function lightBtn(idx, ms = 400) {
+    const b = btns[idx];
+    b.classList.add('active');
+    playSound(colors[idx]);
+    setTimeout(() => b.classList.remove('active'), ms);
+}
+
+function sleep(ms) { return new Promise(r=>setTimeout(r,ms)); }
+
+async function showSeq() {
+    canPlay = false;
+    statusText.textContent = 'Watch the pattern...';
+    for (let i=0; i<seq.length; ++i) {
+        lightBtn(seq[i]);
+        await sleep(320);
+        await sleep(120);
+    }
+    statusText.textContent = "Repeat the pattern!";
+    canPlay = true;
+}
+
+function nextStep() {
+    seq.push(Math.floor(Math.random() * 4));
+    plyIdx = 0;
+    showSeq();
+}
+
+function reset() {
+    running = false;
+    canPlay = false;
+    seq = [];
+    score = 0;
+    scoreEl.textContent = "0";
+    plyIdx = 0;
+    statusText.textContent = '';
+}
+
+function failEffect(idx) {
+    btns[idx].classList.add('active');
+    statusText.textContent = 'Wrong! Game Over.';
+    canPlay = false;
+    setTimeout(() => {
+        btns[idx].classList.remove('active');
+        statusText.textContent += ' Press Start to retry.';
+    }, 800);
+}
+
+function winEffect() {
+    statusText.textContent = "Great! Next round...";
+}
+
+btns.forEach((btn, idx) => {
+    btn.addEventListener('click', () => {
+        if (!canPlay || !running) return;
+        playSound(colors[idx]);
+        if (idx === seq[plyIdx]) {
+            plyIdx++;
+            if (plyIdx === seq.length) {
+                score = seq.length;
+                scoreEl.textContent = String(score);
+                canPlay = false;
+                setTimeout(()=>{
+                    winEffect();
+                    setTimeout(nextStep, 700);
+                },300);
+            }
+        } else {
+            failEffect(idx);
+            running = false;
         }
+    });
+});
 
-        // Special shining/moving/blinking dot
-        // Control parameters
-        let movingDot = {
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            baseRadius: 15,
-            color: "#fffbe8",
-            phase: 0,
-            direction: Math.random() * 2 * Math.PI,
-            velocity: 1.2 + Math.random()
-        };
+startBtn.addEventListener('click', () => {
+    reset();
+    running = true;
+    nextStep();
+});
 
-        function drawShiningDot(dot, time) {
-            // pulsate
-            let shine = Math.abs(Math.sin(time / 500)) * 0.7 + 0.2;
-            let alpha = Math.abs(Math.sin(time / 300)) * 0.55 + 0.25;
-            // Outer glow
-            let grad = ctx.createRadialGradient(dot.x, dot.y, dot.baseRadius*0.4, dot.x, dot.y, dot.baseRadius*2.5);
-            grad.addColorStop(0, `rgba(255,253,246,${shine*0.7})`);
-            grad.addColorStop(0.5, `rgba(255,230,200,${alpha*0.6})`);
-            grad.addColorStop(0.8, `rgba(180,100,255,${alpha*0.12})`);
-            grad.addColorStop(1, `rgba(180,100,255,0)`);
-            ctx.save();
-            ctx.globalCompositeOperation = "lighter";
-            ctx.beginPath();
-            ctx.arc(dot.x, dot.y, dot.baseRadius*2, 0, 2 * Math.PI);
-            ctx.fillStyle = grad;
-            ctx.shadowColor = "#fff6cd";
-            ctx.shadowBlur = 42;
-            ctx.fill();
-            ctx.restore();
-            // Main dot
-            ctx.save();
-            ctx.globalCompositeOperation = "lighter";
-            ctx.beginPath();
-            ctx.arc(dot.x, dot.y, dot.baseRadius + Math.sin(time/150)*3, 0, 2 * Math.PI);
-            ctx.fillStyle = `rgba(255,253,246,${shine})`;
-            ctx.shadowColor = "#fffbb9";
-            ctx.shadowBlur = 30;
-            ctx.fill();
-            ctx.restore();
-        }
-
-        function drawDots() {
-            dots.forEach(dot => {
-                ctx.fillStyle = dot.color;
-                ctx.beginPath();
-                ctx.arc(dot.x, dot.y, dot.size, 0, Math.PI*2);
-                ctx.fill();
-            })
-        }
-
-        // Animation
-        let animationId = null;
-        let lastDrawBannerMouse = null;
-
-        function animateDots(time) {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            drawDots();
-            if (lastDrawBannerMouse && lastDrawBannerMouse.inside) {
-                let mouse = lastDrawBannerMouse;
-                dots.forEach(dot => {
-                    let distance = Math.hypot(mouse.x - dot.x, mouse.y - dot.y);
-                    if(distance < 300){
-                        ctx.strokeStyle = dot.color;
-                        ctx.lineWidth = 1;
-                        ctx.beginPath();
-                        ctx.moveTo(dot.x, dot.y);
-                        ctx.lineTo(mouse.x, mouse.y);
-                        ctx.stroke();
-                    }
-                });
-            }
-            // Animate moving dot's position (move in a sinusoidal/elliptical path)
-            movingDot.x += Math.cos(movingDot.direction)*movingDot.velocity;
-            movingDot.y += Math.sin(movingDot.direction)*movingDot.velocity;
-            // Bounce off edges
-            if(movingDot.x <= movingDot.baseRadius*2 || movingDot.x >= canvas.width-movingDot.baseRadius*2){
-                movingDot.direction = Math.PI - movingDot.direction;
-            }
-            if(movingDot.y <= movingDot.baseRadius*2 || movingDot.y >= canvas.height-movingDot.baseRadius*2){
-                movingDot.direction = -movingDot.direction;
-            }
-            drawShiningDot(movingDot, time);
-            animationId = requestAnimationFrame(animateDots);
-        }
-
-        drawDots();
-        animateDots();
-
-        banner.addEventListener('mousemove', (event) => {
-            const rect = banner.getBoundingClientRect();
-            lastDrawBannerMouse = {
-                x: event.clientX - rect.left,
-                y: event.clientY - rect.top,
-                inside: true
-            }
-        });
-        banner.addEventListener('mouseleave', () => {
-            lastDrawBannerMouse = null;
-        });
-
-        window.addEventListener('resize', () => {
-            cancelAnimationFrame(animationId);
-            resizeCanvas();
-            // Recreate dots for new size
-            dots = [];
-            for (let index = 0; index < 500; index++) {
-                dots.push({
-                    x:  Math.floor(Math.random() * canvas.width),
-                    y:  Math.floor(Math.random() * canvas.height),
-                    size: Math.random() * 3 + 5,
-                    color: arrayColors[Math.floor(Math.random()* 5)]
-                });
-            }
-            // Reset moving dot within canvas
-            movingDot.x = Math.random() * canvas.width;
-            movingDot.y = Math.random() * canvas.height;
-            animationId = requestAnimationFrame(animateDots);
-        });
-    </script>
+reset();
+</script>
 </body>
 </html>
 
+        
